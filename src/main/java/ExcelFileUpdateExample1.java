@@ -20,9 +20,56 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  */
 public class ExcelFileUpdateExample1 {
 
+	public static void existe(){
+        String excelFilePath = "Inventario.xlsx";
+        try{
+
+            File file = new File(excelFilePath);
+            if(!file.exists()){
+                Workbook workbook = new XSSFWorkbook();
+                Sheet sheet = workbook.createSheet("Inventario");
+
+                FileOutputStream fileOut = new FileOutputStream(excelFilePath);
+                workbook.write(fileOut);
+
+                fileOut.close();
+
+
+                FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
+                workbook = WorkbookFactory.create(inputStream);
+
+                sheet = workbook.getSheetAt(0);
+
+                Row row = sheet.createRow(0);
+
+                row.createCell(0).setCellValue("No");
+                row.createCell(1).setCellValue("Book Title");
+                row.createCell(2).setCellValue("Author");
+                row.createCell(3).setCellValue("Price");
+
+                inputStream.close();
+
+                FileOutputStream outputStream = new FileOutputStream(excelFilePath);
+                workbook.write(outputStream);
+                workbook.close();
+                outputStream.close();
+            }
+
+        }catch(FileNotFoundException ex){
+            ex.printStackTrace();
+        }
+        catch(IOException ex){
+            ex.printStackTrace();
+        }
+        catch(InvalidFormatException ex){
+            ex.printStackTrace();
+        }
+    }
+
 
 	public static void main(String[] args) {
 		String excelFilePath = "Inventario.xlsx";
+		existe();
 		
 		try {
 			FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
