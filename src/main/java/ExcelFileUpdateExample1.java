@@ -10,6 +10,10 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import java.util.Scanner;
+import javax.swing.JOptionPane;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * This program illustrates how to update an existing Microsoft Excel document.
@@ -23,41 +27,74 @@ public class ExcelFileUpdateExample1 {
 
 	public static void main(String[] args) {
 		String excelFilePath = "Inventario.xlsx";
+                String ID = "";
+                String Author = "";
+                String Price = "";
+                Scanner in = new Scanner(System.in);
+                int Fila=-1;
+                
+                System.out.println("Por favor ingrese el ID del campo a modificar");
+                ID = in.nextLine();
+                ID=ID+".0";
+                
 		
 		try {
 			FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
 			Workbook workbook = WorkbookFactory.create(inputStream);
 
-			Sheet sheet = workbook.getSheetAt(0);
+			Sheet sheet = workbook.getSheet("Java Books");
+                        
+                        int totalNoOfRows = sheet.getLastRowNum();
+                                          
+                        for (int rowIndex = 0; rowIndex <= totalNoOfRows; rowIndex++) {
+                           
+                            Row row = sheet.getRow(rowIndex);
+                            if (row != null) {
+                              Cell cell = row.getCell(0);
+                              if (cell != null) {
+                                  
+                                String cellValue = null;
 
-			Object[][] bookData = {
-					{"El que se duerme pierde", "Tom Peter", 16},
-					{"Sin lugar a duda", "Ana Gutierrez", 26},
-					{"El arte de dormir", "Nico", 32},
-					{"Buscando a Nemo", "Humble Po", 41},
-			};
+                                switch (cell.getCellType()) {
+                                case Cell.CELL_TYPE_STRING:
+                                        cellValue = cell.getStringCellValue();
+                                        break;
 
-			int rowCount = sheet.getLastRowNum();
+                                case Cell.CELL_TYPE_FORMULA:
+                                        cellValue = cell.getCellFormula();
+                                        break;
 
-			for (Object[] aBook : bookData) {
-				Row row = sheet.createRow(++rowCount);
+                                case Cell.CELL_TYPE_NUMERIC:
+                                        if (DateUtil.isCellDateFormatted(cell)) {
+                                                cellValue = cell.getDateCellValue().toString();
+                                        } else {
+                                                cellValue = Double.toString(cell.getNumericCellValue());
+                                        }
+                                        break;
 
-				int columnCount = 0;
-				
-				Cell cell = row.createCell(columnCount);
-				cell.setCellValue(rowCount);
-				
-				for (Object field : aBook) {
-					cell = row.createCell(++columnCount);
-					if (field instanceof String) {
-						cell.setCellValue((String) field);
-					} else if (field instanceof Integer) {
-						cell.setCellValue((Integer) field);
-					}
-				}
+                                case Cell.CELL_TYPE_BLANK:
+                                        cellValue = "";
+                                        break;
 
-			}
+                                case Cell.CELL_TYPE_BOOLEAN:
+                                        cellValue = Boolean.toString(cell.getBooleanCellValue());
+                                        break;
 
+                                }
+                                if (cellValue.equals(ID)){
+                                    
+                                    Fila = rowIndex+1;
+                                    System.out.println("ID encotrado.");
+                                    break;
+                                }
+                              }
+                            }
+                          }
+                        
+                         if (Fila==-1){
+                             System.out.println("Error, ID no encotrado.");
+                         }
+                        
 			inputStream.close();
 
 			FileOutputStream outputStream = new FileOutputStream(excelFilePath);
@@ -69,6 +106,8 @@ public class ExcelFileUpdateExample1 {
 				| InvalidFormatException ex) {
 			ex.printStackTrace();
 		}
+                
+                
 	}
 
 }
