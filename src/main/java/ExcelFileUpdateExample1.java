@@ -12,6 +12,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.util.Scanner;
+import javax.swing.JOptionPane;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * This program illustrates how to update an existing Microsoft Excel document.
@@ -72,41 +76,164 @@ public class ExcelFileUpdateExample1 {
 	public static void main(String[] args) {
 		String excelFilePath = "Inventario.xlsx";
 		existe();
+                String ID;
+                String Author;
+                int Price;
+                Scanner in = new Scanner(System.in);
+                int Fila=-1;
+                int Opcion=-1;
+                
+                System.out.println("Por favor ingrese el ID del campo a modificar");
+                ID = in.nextLine();
+                ID=ID+".0";
+                
 		
 		try {
 			FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
 			Workbook workbook = WorkbookFactory.create(inputStream);
 
-			Sheet sheet = workbook.getSheetAt(0);
+			Sheet sheet = workbook.getSheet("Java Books");
+                        
+                        int totalNoOfRows = sheet.getLastRowNum();
+                        int totalNoOfColumns = sheet.getRow(0).getLastCellNum();
+                                          
+                        for (int rowIndex = 0; rowIndex <= totalNoOfRows; rowIndex++) {
+                           
+                            Row row = sheet.getRow(rowIndex);
+                            if (row != null) {
+                              Cell cell = row.getCell(0);
+                              if (cell != null) {
+                                  
+                                String cellValue = null;
 
-			Object[][] bookData = {
-					{"El que se duerme pierde", "Tom Peter", 16},
-					{"Sin lugar a duda", "Ana Gutierrez", 26},
-					{"El arte de dormir", "Nico", 32},
-					{"Buscando a Nemo", "Humble Po", 41},
-			};
+                                switch (cell.getCellType()) {
+                                case Cell.CELL_TYPE_STRING:
+                                        cellValue = cell.getStringCellValue();
+                                        break;
 
-			int rowCount = sheet.getLastRowNum();
+                                case Cell.CELL_TYPE_FORMULA:
+                                        cellValue = cell.getCellFormula();
+                                        break;
 
-			for (Object[] aBook : bookData) {
-				Row row = sheet.createRow(++rowCount);
+                                case Cell.CELL_TYPE_NUMERIC:
+                                        if (DateUtil.isCellDateFormatted(cell)) {
+                                                cellValue = cell.getDateCellValue().toString();
+                                        } else {
+                                                cellValue = Double.toString(cell.getNumericCellValue());
+                                        }
+                                        break;
 
-				int columnCount = 0;
-				
-				Cell cell = row.createCell(columnCount);
-				cell.setCellValue(rowCount);
-				
-				for (Object field : aBook) {
-					cell = row.createCell(++columnCount);
-					if (field instanceof String) {
-						cell.setCellValue((String) field);
-					} else if (field instanceof Integer) {
-						cell.setCellValue((Integer) field);
-					}
-				}
+                                case Cell.CELL_TYPE_BLANK:
+                                        cellValue = "";
+                                        break;
 
-			}
+                                case Cell.CELL_TYPE_BOOLEAN:
+                                        cellValue = Boolean.toString(cell.getBooleanCellValue());
+                                        break;
 
+                                }
+                                if (cellValue.equals(ID)){
+                                    
+                                    Fila = rowIndex;
+                                    break;
+                                }
+                              }
+                            }
+                          }
+                        
+                         if (Fila==-1){
+                             
+                             System.out.println("Error, ID no encotrado.");
+                             
+                         }else{
+                             
+                             try{
+                             
+                             while((Opcion!=1)&&(Opcion!=2)){
+                                 
+                              System.out.println("Por favor marque 1 para cambiar el nombre del autor o 2 para cambiar el precio del libro, no se vale otro n�mero diferente para las opciones a realizar.");
+                              Opcion = in.nextInt();
+                              
+                             }
+                             
+                             if(Opcion==1){
+                                 
+                                 System.out.println("Por favor indique el nuevo nombre de Autor");
+                                 Scanner author = new Scanner(System.in);
+                                 Author = author.nextLine();
+                                 Cell cell2Update = sheet.getRow(Fila).getCell(2);
+                                 cell2Update.setCellValue(Author);
+                                 
+                             }
+                             if(Opcion==2){
+                                 
+                                 System.out.println("Por favor indique el nuevo precio");
+                                 Scanner price = new Scanner(System.in);
+                                 Price = price.nextInt();
+                                 Cell cell2Update = sheet.getRow(Fila).getCell(3);
+                                 cell2Update.setCellValue(Price);
+                                 
+                             }
+                             
+                             System.out.println("Operanci�n exitosa, aqu� podr� ver los datos contenidos en el archivo:");
+                             
+                             for (int rowIndex = 0; rowIndex <= totalNoOfRows; rowIndex++) {
+                           
+                                Row row = sheet.getRow(rowIndex);
+                                
+                                if (row != null) {
+                                    
+                                 for (int colIndex = 0; colIndex <= totalNoOfColumns; colIndex++) {
+                                     
+                                  Cell cell = row.getCell(colIndex);
+                                  
+                                  if (cell != null) {
+
+                                    String cellValue = null;
+
+                                    switch (cell.getCellType()) {
+                                        
+                                    case Cell.CELL_TYPE_STRING:
+                                            cellValue = cell.getStringCellValue();
+                                            break;
+
+                                    case Cell.CELL_TYPE_FORMULA:
+                                            cellValue = cell.getCellFormula();
+                                            break;
+
+                                    case Cell.CELL_TYPE_NUMERIC:
+                                            if (DateUtil.isCellDateFormatted(cell)) {
+                                                    cellValue = cell.getDateCellValue().toString();
+                                            } else {
+                                                    cellValue = Double.toString(cell.getNumericCellValue());
+                                            }
+                                            break;
+
+                                    case Cell.CELL_TYPE_BLANK:
+                                            cellValue = "";
+                                            break;
+
+                                    case Cell.CELL_TYPE_BOOLEAN:
+                                            cellValue = Boolean.toString(cell.getBooleanCellValue());
+                                            break;
+
+                                    }
+
+                                   
+                                    System.out.println("["+cellValue+"]");
+
+
+                                  }
+                                }
+                               }
+                             }
+                             
+                           }catch(Exception e){
+                               System.out.println("Ingres� un caracter diferente a los numeros 1 y 2, por favor corra de nuevo el programa y aseg�rese de seguir los pasos correctamente");
+                           }
+                             
+                         }
+                        
 			inputStream.close();
 
 			FileOutputStream outputStream = new FileOutputStream(excelFilePath);
@@ -118,6 +245,8 @@ public class ExcelFileUpdateExample1 {
 				| InvalidFormatException ex) {
 			ex.printStackTrace();
 		}
+                
+                
 	}
 
 }
