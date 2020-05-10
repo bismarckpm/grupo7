@@ -12,6 +12,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.util.Date;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -73,6 +75,76 @@ public class ExcelFileUpdateExample1 {
     }
 
 
+	public static void masde30() {
+		String excelFilePath = "Inventario.xlsx";
+		try{
+			File file = new File(excelFilePath);
+			FileInputStream inputStream = new FileInputStream(file);
+			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+			String sheetName = null;
+			Sheet sheet = workbook.getSheet(sheetName);
+			
+			int rowCount = sheet.getLastRowNum()-sheet.getFirstRowNum();
+			
+			if (rowCount < 30) {
+	            
+				Row newRow = sheet.createRow(rowCount+1);
+				
+				System.out.println("Insert: no, book title, author, price"); 
+				
+				for(int i = 0; i < newRow.getLastCellNum(); i++){
+
+			        Cell cell = newRow.createCell(i);
+			        String cellValue = cell.getStringCellValue();
+			        cell.setCellValue(cellValue);
+
+			    }
+	       
+			} 
+			else {
+
+				int num = workbook.getNumberOfSheets() + 1;
+				Sheet sheetx = workbook.createSheet("Java Books "+num);
+				
+				Row rowx = sheetx.createRow(0);
+
+                rowx.createCell(0).setCellValue("No");
+                rowx.createCell(1).setCellValue("Book Title");
+                rowx.createCell(2).setCellValue("Author");
+                rowx.createCell(3).setCellValue("Price");
+		        
+                System.out.println("New sheet created successfully"); 
+                
+                System.out.println("Insert: no, book title, author, price"); 
+                
+                Row nuevaRow = sheet.createRow(rowCount+1);
+				
+				for(int i = 0; i < nuevaRow.getLastCellNum(); i++){
+
+			        Cell cell = nuevaRow.createCell(i);
+			        String cellValue = cell.getStringCellValue();
+			        cell.setCellValue(cellValue);
+
+			    }
+			}
+            
+				Runtime.getRuntime().exec("Inventario.xlsx");
+			
+                FileOutputStream outputStream = new FileOutputStream(excelFilePath);
+                workbook.write(outputStream);
+                workbook.close();
+                outputStream.close();
+		    
+	        }
+			catch(FileNotFoundException ex){
+	            ex.printStackTrace();
+	        }
+	        catch(IOException ex){
+	            ex.printStackTrace();
+	        }
+	    }
+
+	
 	public static void main(String[] args) {
 		String excelFilePath = "Inventario.xlsx";
 		existe();
