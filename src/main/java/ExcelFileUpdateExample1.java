@@ -81,26 +81,45 @@ public class ExcelFileUpdateExample1 {
 			File file = new File(excelFilePath);
 			FileInputStream inputStream = new FileInputStream(file);
 			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
-			String sheetName = null;
-			Sheet sheet = workbook.getSheet(sheetName);
+			Sheet sheet = workbook.getSheet("Java Books");
 			
 			int rowCount = sheet.getLastRowNum()-sheet.getFirstRowNum();
 			
 			if (rowCount < 30) {
 	            
 				Row newRow = sheet.createRow(rowCount+1);
+				int last = sheet.getLastRowNum();
 				
-				System.out.println("Insert: no, book title, author, price"); 
+				System.out.println("Insert: Number"); 
 				
-				for(int i = 0; i < newRow.getLastCellNum(); i++){
-
-			        Cell cell = newRow.createCell(i);
-			        String cellValue = cell.getStringCellValue();
-			        cell.setCellValue(cellValue);
-
-			    }
-	       
-			} 
+				Scanner number = new Scanner(System.in);
+                int Number = number.nextInt();
+                Cell cellnew = sheet.getRow(last).createCell(0);
+                cellnew.setCellValue(Number);
+                
+                System.out.println("Insert: Book title"); 
+                
+                Scanner title = new Scanner(System.in);
+                String Title = title.nextLine();
+                Cell cellnew1 = sheet.getRow(last).createCell(1);
+                cellnew1.setCellValue(Title);
+                
+                System.out.println("Insert: Author"); 
+                
+                Scanner autor = new Scanner(System.in);
+                String Autor = autor.nextLine();
+                Cell cellnew2 = sheet.getRow(last).createCell(2);
+                cellnew2.setCellValue(Autor);
+                
+                System.out.println("Insert: Price");
+                
+                Scanner precio = new Scanner(System.in);
+                String Precio = precio.nextLine();
+                Cell cellnew3 = sheet.getRow(last).createCell(3);
+                cellnew3.setCellValue(Precio);
+				
+			}
+			
 			else {
 
 				int num = workbook.getNumberOfSheets() + 1;
@@ -115,21 +134,39 @@ public class ExcelFileUpdateExample1 {
 		        
                 System.out.println("New sheet created successfully"); 
                 
-                System.out.println("Insert: no, book title, author, price"); 
-                
                 Row nuevaRow = sheet.createRow(rowCount+1);
+				int last = rowCount;
+                
+                System.out.println("Insert: Number"); 
 				
-				for(int i = 0; i < nuevaRow.getLastCellNum(); i++){
-
-			        Cell cell = nuevaRow.createCell(i);
-			        String cellValue = cell.getStringCellValue();
-			        cell.setCellValue(cellValue);
-
-			    }
+				Scanner number = new Scanner(System.in);
+                int Number = number.nextInt();
+                Cell cellnew = sheet.getRow(last).createCell(0);
+                cellnew.setCellValue(Number);
+                
+                System.out.println("Insert: Book title"); 
+                
+                Scanner title = new Scanner(System.in);
+                String Title = title.nextLine();
+                Cell cellnew1 = sheet.getRow(last).createCell(1);
+                cellnew1.setCellValue(Title);
+                
+                System.out.println("Insert: Author"); 
+                
+                Scanner autor = new Scanner(System.in);
+                String Autor = autor.nextLine();
+                Cell cellnew2 = sheet.getRow(last).createCell(2);
+                cellnew2.setCellValue(Autor);
+                
+                System.out.println("Insert: Price");
+                
+                Scanner precio = new Scanner(System.in);
+                String Precio = precio.nextLine();
+                Cell cellnew3 = sheet.getRow(last).createCell(3);
+                cellnew3.setCellValue(Precio);
+				
 			}
             
-				Runtime.getRuntime().exec("Inventario.xlsx");
-			
                 FileOutputStream outputStream = new FileOutputStream(excelFilePath);
                 workbook.write(outputStream);
                 workbook.close();
@@ -148,7 +185,8 @@ public class ExcelFileUpdateExample1 {
 	public static void main(String[] args) {
 		String excelFilePath = "Inventario.xlsx";
 		existe();
-                String ID;
+        masde30();        
+				String ID;
                 String Author;
                 int Price;
                 Scanner in = new Scanner(System.in);
